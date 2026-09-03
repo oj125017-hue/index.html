@@ -134,10 +134,10 @@
     const TOTAL_NUMEROS = 1000;
     const PRECIO_NUMERO = 1.00;
     const MIN_COMPRA = 5;
-    const WHATSAPP_NUMERO = "593991234567"; // Reemplaza con tu número de WhatsApp real
+    const WHATSAPP_NUMERO = "593991234567";
 
     let seleccionados = new Set();
-    let vendidos = [12, 45, 100, 250]; // Números ya vendidos de ejemplo
+    let vendidos = [12, 45, 100, 250];
 
     function cargarNumeros() {
       const grid = document.getElementById('gridNumeros');
@@ -185,7 +185,6 @@
       document.getElementById('porcTxt').innerText = `${porc}% VENDIDO`;
     }
 
-    // Funciones de Navegación
     function ocultarTodas() {
       document.getElementById('screen1').classList.add('hidden');
       document.getElementById('screen2').classList.add('hidden');
