@@ -137,7 +137,7 @@
     const WHATSAPP_NUMERO = "593991234567";
 
     let seleccionados = new Set();
-    let vendidos = [12, 45, 100, 250];
+    let vendidos = [];
 
     function cargarNumeros() {
       const grid = document.getElementById('gridNumeros');
