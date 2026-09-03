@@ -16,7 +16,9 @@
     .num.sel { background: #C5A028; color: #000; }
     .num.vend { background: #3a0000; color: #555; border-color: #500; text-decoration: line-through; cursor: not-allowed; }
     .btn { width: 100%; padding: 18px; border: none; border-radius: 14px; font-weight: 900; background: linear-gradient(90deg, #C5A028, #F9E27D); color: #000; font-size: 17px; cursor: pointer; margin-top: 10px; }
+    .btn-sec { background: #333; color: #fff; margin-top: 8px; }
     input { width: 100%; padding: 14px; margin: 7px 0; border-radius: 10px; border: 1px solid #333; background: #1a1a1a; color: #fff; font-size: 15px; }
+    .pago-option { border: 1px solid #333; background: #181818; padding: 12px; border-radius: 10px; margin-bottom: 10px; text-align: left; }
     .hidden { display: none; }
   </style>
 </head>
@@ -56,7 +58,6 @@
         <p style="font-size: 45px; font-weight: 900; color: gold; margin: 0;">$1.00</p>
         <p style="font-size: 12px; color: #aaa; margin-bottom: 15px;">Mínimo 5 números</p>
         
-        <!-- BOTÓN AGREGADO -->
         <button class="btn" onclick="irASeleccion()">COMPRAR NÚMEROS</button>
 
         <hr style="border-color: #222; margin-top: 15px;">
@@ -75,19 +76,54 @@
       <div class="card" style="margin-top: 15px;">
         <p>Seleccionados: <b id="cantSeleccionados" style="color: gold;">0</b></p>
         <p>Total a pagar: <b id="totalPagar" style="color: gold;">$0.00</b></p>
-        <button class="btn" onclick="irAFormulario()">CONTINUAR COMPRA</button>
-        <button class="btn" style="background: #333; color: #fff; margin-top: 8px;" onclick="irAPrincipal()">VOLVER</button>
+        <button class="btn" onclick="irAFormulario()">CONTINUAR A DATOS</button>
+        <button class="btn btn-sec" onclick="irAPrincipal()">VOLVER</button>
       </div>
     </div>
 
-    <!-- ================= PANTALLA 3: DATOS Y ENVÍO ================= -->
+    <!-- ================= PANTALLA 3: DATOS DEL COMPRADOR ================= -->
     <div id="screen3" class="hidden">
       <h2 style="color: gold; text-align: center;">DATOS DE COMPRA</h2>
       <div class="card">
-        <input type="text" id="nombre" placeholder="Nombre y Apellido">
-        <input type="tel" id="telefono" placeholder="Número de WhatsApp">
-        <button class="btn" onclick="enviarWhatsApp()">ENVIAR PEDIDO POR WHATSAPP</button>
-        <button class="btn" style="background: #333; color: #fff; margin-top: 8px;" onclick="irASeleccion()">VOLVER A NÚMEROS</button>
+        <label style="font-size: 13px; color: #aaa;">Nombre completo:</label>
+        <input type="text" id="nombre" placeholder="Ej: Juan Pérez">
+        
+        <label style="font-size: 13px; color: #aaa;">Teléfono (WhatsApp):</label>
+        <input type="tel" id="telefono" placeholder="Ej: 0991234567">
+        
+        <button class="btn" onclick="irAMetodosPago()">CONTINUAR A MÉTODOS DE PAGO</button>
+        <button class="btn btn-sec" onclick="irASeleccion()">VOLVER A NÚMEROS</button>
+      </div>
+    </div>
+
+    <!-- ================= PANTALLA 4: MÉTODOS DE PAGO ================= -->
+    <div id="screen4" class="hidden">
+      <h2 style="color: gold; text-align: center;">MÉTODOS DE PAGO</h2>
+      <p style="text-align: center; font-size: 14px; color: #aaa;">Realiza el pago para reservar tus números</p>
+
+      <div class="card">
+        <p style="margin-top:0;"><b>Monto total:</b> <span id="montoFinal" style="color: gold; font-weight: bold;">$0.00</span></p>
+
+        <!-- Opción 1: Transferencia Bancaria -->
+        <div class="pago-option">
+          <h4 style="margin: 0 0 5px; color: gold;">🏦 Transferencia / Depósito</h4>
+          <p style="margin: 3px 0; font-size: 13px;"><b>Banco:</b> Pichincha / Guayaquil</p>
+          <p style="margin: 3px 0; font-size: 13px;"><b>Tipo:</b> Ahorros</p>
+          <p style="margin: 3px 0; font-size: 13px;"><b>N° Cuenta:</b> 2200XXXXXX</p>
+          <p style="margin: 3px 0; font-size: 13px;"><b>Titular:</b> Nombre Apellido</p>
+          <p style="margin: 3px 0; font-size: 13px;"><b>CI/RUC:</b> 1712345678</p>
+        </div>
+
+        <!-- Opción 2: Deuna / Billetera digital -->
+        <div class="pago-option">
+          <h4 style="margin: 0 0 5px; color: #25D366;">📱 Deuna! / Billetera Digital</h4>
+          <p style="margin: 3px 0; font-size: 13px;"><b>Número:</b> 0991234567</p>
+        </div>
+
+        <p style="font-size: 12px; color: #aaa; text-align: center;">Una vez realizado el pago, envía tu comprobante por WhatsApp para confirmar tus boletos.</p>
+
+        <button class="btn" onclick="enviarWhatsApp()">REPORTAR PAGO POR WHATSAPP</button>
+        <button class="btn btn-sec" onclick="irAFormulario()">VOLVER A DATOS</button>
       </div>
     </div>
 
@@ -98,12 +134,11 @@
     const TOTAL_NUMEROS = 1000;
     const PRECIO_NUMERO = 1.00;
     const MIN_COMPRA = 5;
-    const WHATSAPP_NUMERO = "593991234567"; // Reemplazar con tu número real con código de país
+    const WHATSAPP_NUMERO = "593991234567"; // Reemplaza con tu número de WhatsApp real
 
     let seleccionados = new Set();
-    let vendidos = [12, 45, 100, 250]; // Ejemplo de números ya vendidos
+    let vendidos = [12, 45, 100, 250]; // Números ya vendidos de ejemplo
 
-    // Inicializar cuadrícula de números
     function cargarNumeros() {
       const grid = document.getElementById('gridNumeros');
       grid.innerHTML = '';
@@ -136,8 +171,10 @@
 
     function actualizarResumen() {
       const cant = seleccionados.size;
+      const total = (cant * PRECIO_NUMERO).toFixed(2);
       document.getElementById('cantSeleccionados').innerText = cant;
-      document.getElementById('totalPagar').innerText = `$${(cant * PRECIO_NUMERO).toFixed(2)}`;
+      document.getElementById('totalPagar').innerText = `$${total}`;
+      document.getElementById('montoFinal').innerText = `$${total}`;
     }
 
     function actualizarProgreso() {
@@ -148,17 +185,22 @@
       document.getElementById('porcTxt').innerText = `${porc}% VENDIDO`;
     }
 
-    // Navegación entre pantallas
-    function irASeleccion() {
+    // Funciones de Navegación
+    function ocultarTodas() {
       document.getElementById('screen1').classList.add('hidden');
-      document.getElementById('screen2').classList.remove('hidden');
+      document.getElementById('screen2').classList.add('hidden');
       document.getElementById('screen3').classList.add('hidden');
+      document.getElementById('screen4').classList.add('hidden');
     }
 
     function irAPrincipal() {
+      ocultarTodas();
       document.getElementById('screen1').classList.remove('hidden');
-      document.getElementById('screen2').classList.add('hidden');
-      document.getElementById('screen3').classList.add('hidden');
+    }
+
+    function irASeleccion() {
+      ocultarTodas();
+      document.getElementById('screen2').classList.remove('hidden');
     }
 
     function irAFormulario() {
@@ -166,28 +208,33 @@
         alert(`Debes seleccionar un mínimo de ${MIN_COMPRA} números.`);
         return;
       }
-      document.getElementById('screen2').classList.add('hidden');
+      ocultarTodas();
       document.getElementById('screen3').classList.remove('hidden');
+    }
+
+    function irAMetodosPago() {
+      const nombre = document.getElementById('nombre').value.trim();
+      const tel = document.getElementById('telefono').value.trim();
+
+      if (!nombre || !tel) {
+        alert("Por favor completa tu nombre y número de teléfono antes de continuar.");
+        return;
+      }
+      ocultarTodas();
+      document.getElementById('screen4').classList.remove('hidden');
     }
 
     function enviarWhatsApp() {
       const nombre = document.getElementById('nombre').value.trim();
       const tel = document.getElementById('telefono').value.trim();
-
-      if (!nombre || !tel) {
-        alert("Por favor completa tu nombre y teléfono.");
-        return;
-      }
-
       const listaNum = Array.from(seleccionados).map(n => String(n).padStart(3, '0')).join(', ');
       const total = (seleccionados.size * PRECIO_NUMERO).toFixed(2);
       
-      const mensaje = `¡Hola! Quiero comprar boletos para la rifa THE WIN.\n\n👤 *Nombre:* ${nombre}\n📞 *Teléfono:* ${tel}\n🔢 *Números:* ${listaNum}\n💵 *Total:* $${total}`;
+      const mensaje = `¡Hola! Realicé/voy a realizar el pago de mi reserva en THE WIN.\n\n👤 *Nombre:* ${nombre}\n📞 *Teléfono:* ${tel}\n🔢 *Números elegidos:* ${listaNum}\n💵 *Monto Total:* $${total}\n\n📌 Adjunto comprobante de pago:`;
       
       window.open(`https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensaje)}`, '_blank');
     }
 
-    // Cargar al iniciar
     cargarNumeros();
   </script>
 </body>
